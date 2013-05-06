@@ -1,0 +1,139 @@
+##########################################################################
+# project-config.jam
+#
+# Declares unicomm project dependencies.
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+# Copyright 2009 Dmitry Timoshenko
+
+import builtin ;
+import project ;
+import os ;
+import boost ;
+
+project project-config ;
+
+##########################################################################
+# get libraries location using environment variables, see dependecies-*.*
+# files to properly configure those pathes
+local rule define-path-constant ( env-var-name )
+{
+  if [ os.environ $(env-var-name) ]
+  {
+    path-constant $(env-var-name) : [ os.environ $(env-var-name) ] ;
+  }
+}
+
+local rule define-const ( env-var-name )
+{
+  if [ os.environ $(env-var-name) ]
+  {
+    constant $(env-var-name) : [ os.environ $(env-var-name) ] ;
+  }
+}
+
+define-path-constant BOOST_ROOT ;
+define-path-constant BOOST_INCLUDE_PATH ;
+define-path-constant BOOST_LIBRARY_PATH ;
+define-path-constant SMART_ROOT ;
+define-const OPENSSL_ROOT ;
+define-const XERCESC_ROOT ;
+
+local use-pre-built-boost = [ MATCH "^--use-pre-built-boost=(.*)" : [ modules.peek : ARGV ] ] ;
+if $(use-pre-built-boost)
+{
+  ECHO "Unicomm: Using boost prebuilt libraries" ;
+
+  using boost : $(use-pre-built-boost)
+    : <include>$(BOOST_INCLUDE_PATH)
+      <library>$(BOOST_LIBRARY_PATH)
+    ;
+
+  boost.use-project ;
+} else
+{
+  ECHO "Unicomm: Using boost source tree" ;
+
+  use-project boost : $(BOOST_ROOT) ;
+}
+
+use-project smart : $(SMART_ROOT) ;
+
+##########################################################################
+# openssl
+
+### windows
+alias openssl
+  :
+    /project-config//ssleay
+    /project-config//libeay
+  :
+    <target-os>windows
+  ;
+
+#
+lib ssleay
+  :
+  :
+    <name>ssleay32
+    <search>$(OPENSSL_ROOT)lib
+    <target-os>windows
+    <link>shared
+  :
+  :
+    <include>$(OPENSSL_ROOT)include
+  ;
+
+#
+lib libeay
+  :
+  :
+    <name>libeay32
+    <search>$(OPENSSL_ROOT)lib
+    <target-os>windows
+    <link>shared
+  :
+  :
+    <include>$(OPENSSL_ROOT)include
+  ;
+
+### linux
+lib openssl
+ :
+ :
+   <name>ssl
+   <target-os>linux:<link>shared
+ ;
+
+# bjam can't find best alternative if below definition is used
+# lib openssl
+  # :
+  # :
+    # <name>ssl
+    # <target-os>linux
+    # <link>shared
+  # ;
+
+##########################################################################
+# Apache Xerces-C++ XML
+
+### debug, debug-ssl, release, release-ssl
+searched-lib xercesc
+  :
+  :
+    <target-os>windows,<variant>debug:<name>xerces-c_2D
+    <target-os>windows,<variant>debug-ssl:<name>xerces-c_2D
+    <target-os>windows,<variant>release:<name>xerces-c_2
+    <target-os>windows,<variant>release-ssl:<name>xerces-c_2
+
+    <target-os>linux:<name>xerces-c
+    <search>$(XERCESC_ROOT)lib
+    <link>shared
+  :
+  :
+    <include>$(XERCESC_ROOT)include
+  ;
+

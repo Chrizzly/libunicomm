@@ -1,0 +1,282 @@
+##########################################################################
+# Jamroot
+#
+# Smart multipurpose C++ library.
+#
+# Smart project root jam file.
+# Declares smart project rules to build smart library using
+# desired configuraion.
+#
+# Please, try .\build.cmd --help or ./build.sh --help on Linux for more details.
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+# Copyright 2009 Dmitry Timoshenko
+
+##########################################################################
+# import libraries
+
+import common ;
+import option ;
+import targets ;
+
+##########################################################################
+# constants
+
+path-constant SMART_ROOT : . ;
+constant SMART_VERSION : 1.01 ;
+
+local version-tag = [ MATCH "^([^.]+)[.]([^.]+)" : $(SMART_VERSION) ] ;
+constant SMART_VERSION_TAG : $(version-tag:J="_") ;
+
+##########################################################################
+# smart jam project
+
+project smart
+  : source-location
+    $(SMART_ROOT)/src
+    $(SMART_ROOT)/src/data
+  : requirements
+    <runtime-link>shared
+    # msvc
+    <toolset>msvc:<define>SMART_NO_AUTO_LINK
+    <toolset>msvc,<link>static:<define>_LIB
+    # intel
+    <toolset>intel:<define>SMART_NO_AUTO_LINK
+    <toolset>intel,<link>static:<define>_LIB
+
+    <target-os>windows:<define>WIN32
+    <target-os>windows:<define>_WIN32_WINNT=0x501
+    <target-os>windows:<define>_UNICODE
+    <target-os>windows:<define>UNICODE
+    <variant>debug:<define>DEBUG
+    <variant>debug:<define>_DEBUG
+    <variant>debug-ssl:<define>DEBUG
+    <variant>debug-ssl:<define>_DEBUG
+    <variant>release:<define>NDEBUG
+    <variant>release-ssl:<define>NDEBUG
+    <define>BOOST_ALL_NO_LIB=1
+    # smart includes
+    <include>$(SMART_ROOT)/include
+    # boost include
+    <include>$(BOOST_ROOT)
+    <include>$(BOOST_INCLUDE_PATH)
+    # target's name
+    <tag>@$(__name__).tag
+    <conditional>@handle-static-runtime
+  : usage-requirements
+    <include>$(SMART_ROOT)/include
+    <toolset>msvc:<define>SMART_NO_AUTO_LINK
+    <toolset>intel:<define>SMART_NO_AUTO_LINK
+    <define>BOOST_ALL_NO_LIB=1
+
+  : default-build
+    <variant>release
+    <link>static
+
+  : build-dir $(SMART_ROOT)/out/stuff/boost-build
+  ;
+
+##########################################################################
+# Library targets
+
+### smart debug out
+lib smart_debug_out
+  : # sources
+    debug_out.cpp
+  : # requirements
+    <link>static
+  ;
+
+### smart timers
+lib smart_timers
+  : # sources
+    timers.cpp
+    /boost//date_time/<link>static
+  : # requirements
+    <link>static
+  ;
+
+### smart raw data
+lib smart_raw_data
+  : # sources
+    raw_data.cpp
+  : # requirements
+    <link>static
+  ;
+
+### smart event dispatcher
+alias smart_event_dispatcher
+    : # sources
+    : # requirements
+      <threading>multi
+    : # default build
+    : # usage requirements
+    ;
+
+### smart sync objects
+alias smart_sync_objects
+    : # sources
+    : # requirements
+    : # default build
+    : # usage requirements
+      #<include>$(SMART_ROOT)/include
+    ;
+
+### smart code page
+lib smart_code_page
+  : # sources
+    code_page.cpp
+  : # requirements
+    <link>static
+  ;
+
+### smart data
+lib smart_data
+    : # sources
+      complex.cpp
+      complex_aux.cpp
+      complex_content_handler_base.cpp
+      complex_default_content_handler.cpp
+      complex_except.cpp
+      complex_old_content_handler.cpp
+      complex_serializer.cpp
+      complex_serializer_details.cpp
+      xercesc_string.cpp
+
+      /project-config//xercesc
+
+    : # requirements
+      <link>static
+    : # default build
+    : # usage requirements
+    ;
+
+# install target rule
+install smart_install
+  :
+    smart_debug_out
+    smart_timers
+    smart_raw_data
+    smart_data
+    smart_code_page
+  :
+    <location>$(SMART_ROOT)/lib
+    <install-type>LIB
+  ;
+
+explicit smart_debug_out smart_timers smart_raw_data smart_data smart_code_page smart_data ;
+
+##########################################################################
+# Extra stuff
+rule handle-static-runtime ( properties * )
+{
+  # Using static runtime with shared libraries is impossible on Linux,
+  # and dangerous on Windows. Therefore, we disallow it. This might
+  # be drastic, but it was disabled for a while with nobody complaining.
+
+  # For CW, static runtime is needed so that std::locale works.
+  if <link>shared in $(properties) && <runtime-link>static in $(properties) &&
+      ! ( <toolset>cw in $(properties) )
+  {
+    ECHO "error: link=shared together with runtime-link=static is not allowed" ;
+    ECHO "error: such property combination is either impossible " ;
+    ECHO "error: or too dangerious to be of any use" ;
+    EXIT ;
+  }
+}
+
+# What kind of layout are we doing?
+#layout = [ option.get layout : "" ] ;
+layout = versioned ;
+# On Windows, we used versioned layout by default in order to
+# be compatible with autolink. On other systems, we use system
+# layout which is what every other program uses. Note that windows
+# check is static, and won't
+#if ! $(layout)
+#{
+#    if [ modules.peek : NT ]
+#    {
+#        layout = versioned ;
+#    }
+#    else
+#    {
+#        layout = system ;
+#    }
+#}
+#layout-$(layout) = true ;
+
+#if $(layout) = system && $(build-type) = complete
+#{
+#    ECHO "error: Cannot use --layout=system with --build-type complete." ;
+#    ECHO "error: Please used either --layout=versioned or --layout=tagged " ;
+#    ECHO "error: if you wish to build multiple variants." ;
+#    if ! [ modules.peek : NT ]
+#    {
+#        ECHO "error: Note that --layout=system is default on Unix starting with Boost 1.40." ;
+#    }
+#    EXIT ;
+#}
+
+# This rule is called by Boost.Build to determine the name of target. We use it
+# to encode the build variant, compiler name and boost version in the target
+# name.
+#
+rule tag ( name : type ? : property-set )
+{
+  if $(type) in STATIC_LIB SHARED_LIB IMPORT_LIB
+  {
+    local result ;
+
+    local variant ;
+    if [ $(property-set).get <variant> ] in debug debug-ssl
+    {
+      variant = debug ;
+    }
+    else if [ $(property-set).get <variant> ] in release release-ssl
+    {
+      variant = ;
+    }
+    else
+    {
+      ECHO "error: Invalid build variant '$(variant)'" ;
+      EXIT ;
+    }
+
+    if $(layout) = versioned
+    {
+      result = [ common.format-name
+          <base> <toolset> -$(variant) -$(SMART_VERSION_TAG)
+          : $(name) : $(type) : $(property-set) ] ;
+    }
+    else if $(layout) = system
+    {
+      result = [ common.format-name
+          <base> -$(variant)
+          : $(name) : $(type) : $(property-set) ] ;
+    }
+    else
+    {
+      ECHO "error: invalid layout '$(layout)'" ;
+      EXIT ;
+    }
+
+    # Optionally add version suffix. On NT, library with version suffix
+    # will not be recognized by linkers. On CYGWIN, we get strage
+    # duplicate symbol errors when library is generated with version
+    # suffix. On OSX, version suffix is not needed -- the linker expects
+    # the libFoo.1.2.3.dylib format. AIX linkers do not accept version
+    # suffixes either. Pgi compilers can not accept library with version
+    # suffix.
+    if $(type) = SHARED_LIB &&
+      ( ! ( [ $(property-set).get <target-os> ] in windows cygwin darwin aix ) &&
+        ! ( [ $(property-set).get <toolset> ] in pgi ) )
+    {
+      result = $(result).$(SMART_VERSION)  ;
+    }
+
+    return $(result) ;
+  }
+}

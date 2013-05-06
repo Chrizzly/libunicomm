@@ -1,0 +1,9 @@
+Version 2.17f Beta /no backward compatibility/
+  - Multithreading support added;
+  - Bugs fixed;
+  - Improvements performed;
+  - Smart library bundled into unicomm package;
+  - Term sample added.
+
+Version 1.00c
+  - Initial beta release.

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<message name="config">
+
+  <!-- 
+	All optional properties has the same default values when 
+	unicomm::config is created by default constructor. 
+	
+	Required means unicomm::load_from_complex_xml will throw if property is absent.
+  -->
+
+  <!-- optional -->
+  <complex name="description">
+    <string name="file">echo_xml.xml</string>
+    <string name="proto">Unicomm based echo protocol sample</string>
+  </complex>
+
+  <!-- required -->
+  <complex name="common">
+	  <!-- required, tcp port to be listened to by the unicomm engine -->
+    <!-- in case of zero Unix selects the value by it's decision and Windows -->
+    <!-- I suppose returns the error -->
+    <uint name="tcp_port">55555</uint>
+
+	  <!-- optional, default = 0; tcp backlog to be used for incoming connections queue -->
+    <!-- 0 manages that system default value is used -->
+    <!-- <uint name="tcp_port">5</uint> -->
+    
+    <!-- optional, default = 0 -->
+    <int name="timeouts_enabled">1</int>
+	
+    <!-- optional, default = ""; possible values { xml, binary, <custom string> = custom format } -->
+ 	  <!-- empty string is also allowed. It means custom format is used, so custom format is default -->
+    <string name="message_format">xml</string>
+	
+    <!-- optional, default = "" -->
+    <!-- <string name="home_dir"></string> -->
+	
+    <!-- optional, default = infinite_timeout = 0 ms -->
+    <!-- <uint name="default_timeout">0</uint> -->
+    
+    <!-- optional, default = undefined_priority = 0 -->
+    <!-- <uint name="default_priority">1</uint> -->	
+    
+    <!-- optional, default = 50 ms -->
+    <!-- <uint name="dispatcher_idle_tout">10</uint> -->
+    
+    <!-- optional, default = 100 ms -->
+    <!-- <uint name="incoming_quantum">200</uint> -->
+    
+    <!-- optional, default = 100 ms -->
+    <!-- <uint name="outgoing_quantum">200</uint> -->
+    
+    <!-- optional, default = 0 -->
+    <!-- <int name="use_unique_message_id">0</int> -->
+
+    <!-- optional, default = 0 -->
+    <!-- <int name="use_default_message_priority">0</int> -->
+  </complex>
+
+  <!-- optional, if absent every inner property has default value -->
+  <complex name="ssl">
+	<!-- optional, default = "" -->
+    <string name="client_verify_file">../../../../echo/ssl/ca.pem</string>
+	
+	<!-- optional, default = "" -->
+    <string name="server_cert_chain_file">../../../../echo/ssl/server.pem</string>
+	
+	<!-- optional, default = "" -->
+    <string name="server_dh_file">../../../../echo/ssl/dh512.pem</string>
+	
+	<!-- optional, default = "" -->
+    <string name="server_key_file">../../../../echo/ssl/server.pem</string>
+	
+	<!-- optional, default = "" -->
+    <string name="server_key_password">test</string>
+  </complex>
+
+  <!-- required, but could be empty - pointless -->
+  <complex name="messages">
+    <items>
+	
+	    <!-- echo_request message, there are all possible properties listed only for example here -->
+      <item>
+        <complex>
+		  <!-- required -->
+          <string name="message_name">echo_request</string>
+		  
+		  <!-- optional, default = default_priority (see above) -->
+          <!-- <uint name="priority">0</uint> -->
+		  
+		  <!-- optional, default = 0 -->
+        <!-- note: it's possible to define reply to reply -->
+	      <!-- messages can be organized into a arbitrary long chain.  -->
+	      <!-- this only depends on logic you need to implement.  -->
+	      <!-- just correcly define those rules and unicomm will care about it.  -->
+          <int name="need_reply">1</int>
+		  
+	      <!-- optional, default = default_timeout (see above), measured in milliseconds -->
+          <uint name="timeout">1000</uint>
+		  
+		  <!-- optional, default = empty array (empty array here means any response is allowed) -->
+          <string name="answers">
+            <items>
+              <item>echo_reply</item>
+            </items>
+          </string>
+        </complex>
+      </item>
+
+  	  <!-- echo_reply message  -->
+      <item>
+        <complex>
+		  <!-- required -->
+          <string name="message_name">echo_reply</string>
+        </complex>
+      </item>
+    </items>
+  </complex>
+
+</message>

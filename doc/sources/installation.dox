@@ -1,0 +1,430 @@
+/** 
+@page installation_page Installation
+
+<ul style="list-style-type:none;">
+  <li>@ref dir_content_section
+  <li>@ref install_section
+    <ul style="list-style-type:none;">
+      <li>@ref building_unicomm_msvc_subsection
+      <li>@ref building_unicomm_boost_build_subsection
+      <li>@ref dep_setup_section
+      <li>@ref install_options_section
+      <li>@ref http_install
+      <li>@ref something_goes_wrong_subsection
+    </ul>
+</ul>
+
+@section dir_content_section Package content
+
+<pre style="border: 1px dashed #C4CFE5; padding: 0.5pc 0.5pc 0.5pc 0.5pc; margin-left: 2em; margin-right: 2em;">
+    <strong>unicomm/</strong>..........................<em>Package root directory</em>
+        <strong>build/</strong>...............<em>Unicomm build auxiliary scripts</em>
+        <strong>doc/</strong>.........................................<em>Manuals</em>
+        <strong>ide/</strong>...............................<em>IDE project files</em>
+        <strong>include/</strong>.................<em>Unicomm public header files</em>
+        <strong>lib/</strong>......................<em>Libraries output directory</em>
+        <strong>out/</strong>.....................<em>Samples out and build stuff</em>
+            <strong>samples/</strong>................<em>Samples output directory</em>
+            <strong>stuff/</strong>..............<em>Intermediate files directory</em>
+        <strong>samples/</strong>........................<em>Samples source files</em>
+        <strong>third_party/</strong>...................<em>Implementation detail</em>
+        <strong>src/</strong>............................<em>Unicomm source files</em>
+</pre>
+
+@section install_section Install
+
+Unpack downloaded package.
+
+In basic and common use case <a href="http://libunicomm.org">unicomm</a> only depends on
+<a href="http://www.boost.org/" target="_blank">boost</a> libraries.
+To successfully build unicomm it's necessary to designate it's location. 
+Note that unicomm is not compatible with versions of boost less than 1.53.
+
+@subsection building_unicomm_msvc_subsection Building unicomm by using Visual Studio IDE
+
+@par Basic build
+Under Visual Studio IDE (2005, 2008) go to <em>Tools->Options->Projects and Solutions</em> select
+<em>VC++ Directories</em> item and setup <a href="http://www.boost.org/" target="_blank">boost</a>
+libararies location. In Visual Studio 2010 open <em>View->Property Manager</em>, 
+then doubleclick the property sheet, add boost if it's not in the list yet.
+Or add path to @e IncludePath and @e LibraryPath environment variables.
+Build desired configuration or use batch build.
+
+@par SSL and built-in XML support
+To use SSL or built-in XML support you should also provide location for
+<a href="http://www.openssl.org/" target="_blank">openssl</a> and
+<a href="http://xerces.apache.org/xerces-c/install-2.html" target="_blank">xercesc</a>
+libraries.
+
+@subsection building_unicomm_boost_build_subsection Building unicomm by using Boost.Build
+
+It's necessary to download 
+<a href="http://www.boost.org/boost-build2/" target="_blank">Boost.Build</a> and install it.
+Unpack the boost build package and build bjam executable under your platform.
+Go to <em>boost-build/engine/src</em> and start <em>build.sh/bat</em> file.
+Don't forget to make bjam binary to be on the search @e PATH.
+One of the ways to designate Boost.Build location is to setup the @e BOOST_BUILD_PATH 
+environment variable to the root of your Boost.Build copy. 
+To find out more details, please see Boost.Build's
+<a href="http://www.boost.org/boost-build2/" target="_blank">home page</a>.
+
+If you are not using a Boost.Build package, but rather the version bundled with 
+the Boost C++ Libraries, anyway you should designate location of bjam and 
+Boost.Build scripts as described above. 
+Usually it's located in @e BOOST_ROOT/tools/build/v2 subdirectory.
+
+After Boost.Build is setup, it's necessary to designate dependencies location.
+You may either use environment variables or
+go to @e unicomm/build/deps directory of your copy of sources and
+edit appropriate files.
+
+@subsection dep_setup_section Dependencies setup
+
+@par Boost setup [ <span style="color: red;">REQUIRED</span> ]
+If you are intended to use boost source tree directory define
+@e BOOST_ROOT variable or if you want to use pre-built variant of boost
+define @e BOOST_INCLUDE_PATH in couple with @e BOOST_LIBRARY_PATH variables.
+@e BOOST_ROOT should point to the directory where the @e Jamroot file locates.
+
+@par OpenSSL setup [ OPTIONAL ]
+If you are intended to  use SSL on Windows it's also necessary to define
+@e OPENSSL_ROOT variable. On Linux platform
+openssl is known library, there are no defines required. But anyway to successfully build
+unicomm, openssl should be installed on the system. 
+Try <em>apt-get install libssl-dev</em> on Ubuntu for instance.
+
+@par Xerces-C based XML Engine setup [ OPTIONAL ]
+To use built-in XML engine you should also define @e XERCESC_ROOT, download and install
+<a href="http://xerces.apache.org/xerces-c/install-2.html" target="_blank">Apache Xerces-C 2.8</a> library.
+
+@note
+For OpenSSL and Xerces-C it's supposed libraries located in
+<em>LIBRARY_ROOT/lib</em> and headers can be found in <em>LIBRARY_ROOT/include</em>.
+
+@par Variables default values
+
+Those values assigned to the variables if they undefined.
+
+<pre style="border: 1px dashed #C4CFE5; padding: 0.5pc 0.5pc 0.5pc 0.5pc; margin-left: 2em; margin-right: 2em;">
+<strong></strong>                     Linux                          Windows
+<strong>BOOST_INCLUDE_PATH = </strong><em>/usr/local/include/boost-1_53  c:\\boost\\include\\boost-1_53</em>
+<strong>BOOST_LIBRARY_PATH = </strong><em>/usr/local/lib                 c:\\boost\\lib</em>
+</pre>
+
+<!--
+<table border="0" cellspacing="3" cellpadding="3" width="500px">
+  <tr>
+    <th></th>
+    <th>Windows</th>
+    <th>Linux</th>
+  </tr>
+  
+  <tr>
+    <td>BOOST_INCLUDE_PATH</td>
+    <td>c:\\boost\\include\\boost-1_53</td>
+    <td>/usr/local/include/boost-1_53</td>
+  </tr>
+
+  <tr>
+    <td>BOOST_LIBRARY_PATH</td>
+    <td>c:\\boost\\lib</td>
+    <td>/usr/local/lib</td>
+  </tr>
+</table>
+-->
+Other variables have empty string values.
+
+@subsection install_options_section Command line options
+
+To build unicomm and samples use @e @b build.sh/cmd. If executed without 
+parameters builds @e release variant in @e static and @e shared configurations. 
+@e build.sh/cmd accepts any parameters accepted by bjam, but there are some 
+extra parameters exist. To build all possibly variants and configurations use 
+@e @b build-complete.sh/cmd, please. 
+
+Execute <em>./build.sh --help</em> on Linux or <em>.\\build.cmd --help</em> 
+on Windows to see the options description. You may see the options description 
+is in the table below.
+
+Defaults for the options are specified in brackets if there are.
+
+<table border="0" cellspacing="3" cellpadding="3" width="100%">
+  <tr>
+    <th colspan="2" align="left">
+      Usage
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      ./build.sh [options] [properties] [targets] on Unix, Linux etc.<br>
+      .\\build.cmd [options] [properties] [targets] on Windows
+    <td>
+  </tr>
+
+  <tr>
+    <th colspan="2" align="left" style="font-weight: bold">
+      <strong>Options</strong>
+    </th>
+  </tr>
+
+  <tr>
+    <td width="25%">
+      -h, --help
+    </td>
+    <td>
+      Display this help and exit
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      --prefix=<PREFIX>
+    </td>
+    <td>
+      Install unicomm files here. By default is not
+      used. To force the installation to the prefix
+      location specify the option or target @e unicomm-install 
+      (see below) explicitly. Binaries are installed into 
+      <em><PREFIX>/lib</em> and
+      headers into <em><PREFIX>/include/unicomm</em>, i.e.
+      if @e --prefix=/usr/local the libraries will be
+      copied into @e /usr/local/lib and headers
+      will appear in @e /usr/local/include/unicomm.
+      If @e unicomm-install target and @e --prefix
+      option is absent binaries installed into 
+      @e unicomm/lib subdirectory.      
+      <br>
+      [/usr/local] on Linux.
+      [c:\\unicomm] on Windows.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      @anchor use_pre_built_boost
+      --use-pre-built-boost=<BOOST_VER>
+    </td>
+    <td>
+      Designates to use pre-built boost libraries
+      instead of using boost source tree. You should
+      define either @e BOOST_ROOT or @e BOOST_INCLUDE_PATH
+      in couple with @e BOOST_LIBRARY_PATH variables depending on
+      the option presence.
+      To make the boost build to find pebuilt libraries
+      it's necessary to specify exact version of boost
+      e.g. <em>.\\build.cmd --use-pre-built-boost=1.53</em> will
+      use 1.53 to resolve the names.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      --clean
+    </td>
+    <td>
+      Cleans the given configuration. This will remove unicomm
+      related targets within the configuration specified.
+      The targets declared by dependencies (e.g. boost) are not
+      affected. For instance <em>.\\build.cmd --clean</em> removes
+      all the destination files regarding to <em>variant=release</em> and
+      <em>link=static,shared</em> i.e. removes the default configuration's
+      main targets.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      --clean-all
+    </td>
+    <td>
+      Cleans the given configuration and all it's dependencies.
+      This will remove unicomm related targets within the
+      configuration specified and all the dependencies are built
+      unlike <em>--clean</em> which removes only the unicomm related targets.
+      <strong>Note:</strong> The @e --prefix=/path/to/prebuilt/unicomm location will also be
+      cleared if the @e --prefix option is specified.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      --win-ver=<WIN_VER>
+    </td>
+    <td>
+      Used to specify Windows system version
+      explicitly.
+      <br>
+      [0x501] - Windows XP.
+    </td>
+  </tr>  
+
+
+  <tr>
+    <td>
+      --use-complex-xml
+    </td>
+    <td>
+      Makes the XML engine to be available.
+      An alternate way to designate to use XML
+      is to specify <em>define=@ref UNICOMM_USE_COMPLEX_XML</em>
+      parameter in command line.
+    </td>
+  </tr>  
+  
+  <tr>
+    <th colspan="2" align="left" style="font-weight: bold">
+      <strong>Properties</strong>
+    </th>
+  </tr>
+
+  <tr>
+    <td>
+      toolset=<TOOLSET>
+    </td>
+    <td>
+      Indicates the toolset to build with. At present
+      msvc and gcc are only guaranteed to be work. If the toolset is not specified
+      the Boost.Build will use default regarding to current environment.
+      In most cases it can be omitted but sometimes when you have
+      several versions of the compiler you may want to designate
+      exact one by using e.g. that syntax <em>toolset=msvc-8.0</em>.
+      Can be msvc|gcc.
+      <br>
+      [automatically detected]
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      define=<MACRO>
+    </td>
+    <td>
+      Define the specified macro.
+      Please, see @ref preprocessor_defines_page "preprocessor definitions" for macroses
+      being used by unicomm.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      variant=<VARIANT>
+    </td>
+    <td>
+      Select one or more the build variants.
+      debug|release|debug-ssl|release-ssl are possible.<br>
+      [release]
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      link=<LINK>
+    </td>
+    <td>
+      Whether to build static or shared libraries.
+      Allowed values static|shared.<br>
+      [static,shared]
+    </td>
+  </tr>
+
+  <tr>
+    <th colspan="2" align="left" style="font-weight: bold">
+      <strong>Targets</strong>
+    </th>
+  </tr>
+
+  <tr>
+    <td>
+      unicomm-install
+    </td>
+    <td>
+      Installs unicomm to the prefix location.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      term-install
+    </td>
+    <td>
+      Build and install term sample.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      http-install
+    </td>
+    <td>
+      Build and install http sample.
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      echo-install
+    </td>
+    <td>
+      Build and install echo sample.
+    </td>
+  </tr>
+
+</table>
+
+More properties and options can be found in Boost.Build documentation.
+Please, check Boost.Build <a href="http://www.boost.org/boost-build2/" target="_blank">home</a> for details.
+Below there are some examples of command line provided.
+
+<em>./build.sh toolset=gcc variant=debug,release,debug-ssl,release-ssl link=shared</em><br>
+<em>./build.sh debug toolset=gcc link=shared define=@ref UNICOMM_USE_COMPLEX_XML define=@ref UNICOMM_DEBUG_VERBOSE</em><br>
+
+Sometimes you may want to pass extra parameters to the compiler to e.g. disable warnings that may appear due to
+different compiler or dependency version. Use @e cxxflags parameter to accomplish the desired.
+
+<em>./build.sh toolset=gcc link=shared,static variant=debug,debug-ssl,release,release-ssl
+cxxflags="-Wno-strict-aliasing -Wno-unused-result -Wno-unused-variable"</em><br>
+
+Under Windows the following line will build unicomm @e shared and @e static in @e debug and @e release
+configuration using msvc 8.0.
+
+<em>.\\build.cmd variant=debug,release link=shared,static toolset=msvc-8.0</em><br>
+
+To build samples use the following commands.
+
+<em>./build.sh term-install variant=debug-ssl,release-ssl link=shared toolset=gcc</em><br>
+<em>./build.sh http-install variant=debug,release link=static toolset=gcc</em><br>
+<em>.\\build.cmd http-install echo-install variant=debug,release link=static toolset=msvc-10.0</em><br>
+
+To build all the configurations use  <em>./build-complete.sh/cmd</em>.
+It builds @e debug, @e debug-ssl, @e release, @e release-ssl
+variants within @e static and @e shared configurations.
+If everything is setup properly you should see the build process output. Boost build will build
+all the necessary dependencies and link it.
+
+@subsection http_install Http sample
+
+To build the http sample just execute the following line.
+
+<em>./build.sh http-install</em>
+
+After the build is completed start the http server, open your browser and
+type <em>http(s)://localhost</em>. Map bora-bora name to 127.0.0.1 by putting it
+into @e hosts file and type <em>http(s)://bora-bora</em>.
+
+@note Samples installed to the
+@e unicomm/out/samples/boost-build subdirectory.<br/>
+All the specified parameters are just passed to bjam engine as is. 
+So, you are enabled to designate any configuration you need. Please, examine Boost.Build's 
+<a href="http://www.boost.org/boost-build2/" target="_blank">home page</a>
+for details.
+
+@subsection something_goes_wrong_subsection If something goes wrong
+If you get errors while building and installing unicomm or it's part try
+<em>--debug-configuration</em> and <em>--debug-building</em> options
+to get extra information on the process. Write 
+<a href="https://groups.google.com/forum/?hl=ru&fromgroups#!forum/libunicomm" target="_blank">here</a> 
+or send me a message <a href="mailto:you.are.welcome@libunicomm.org">you.are.welcome@libunicomm.org</a>
+if you think you found a bug.
+
+@see @ref preprocessor_defines_page.
+ */

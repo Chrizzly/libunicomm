@@ -1,0 +1,43 @@
+##########################################################################
+# Jamfile.v2
+#
+# Unified Communication protocol C++ library.
+#
+# HTTP sample jam project file.
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+# Copyright 2011 Dmitry Timoshenko
+
+project unicomm/http
+  : requirements
+    <target-os>windows:<define>_CONSOLE
+  : usage-requirements
+  : source-location ./
+  ;
+
+exe http
+  : ### sources
+    [ glob *.cpp ]
+
+    /unicomm//unicomm
+    #/smart//smart_code_page
+    /smart//smart_debug_out
+    /smart//smart_timers
+    /boost//filesystem/<link>static
+    /boost//thread/<link>static
+    /boost//regex/<link>static
+    /boost//system/<link>static
+    /boost//program_options/<link>static
+    /boost//date_time/<link>static    
+
+  : ### requirements
+    <variant>debug-ssl:<library>/project-config//openssl
+    <variant>release-ssl:<library>/project-config//openssl
+    <toolset>gcc,<variant>release:<cxxflags>"-Wno-strict-aliasing -Wno-unused"
+    <toolset>gcc,<variant>release-ssl:<cxxflags>"-Wno-strict-aliasing -Wno-unused"
+    <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+    <tag>@$(__name__).tag
+  ;

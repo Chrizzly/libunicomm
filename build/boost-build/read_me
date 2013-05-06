@@ -1,0 +1,4 @@
+To build unicomm there should be boost-build installed on the system. 
+Refer to http://www.boost.org/doc/tools/build/index.html
+Please, see also installation manual 
+http://libunicomm.org/manuals/html/installation_page.html

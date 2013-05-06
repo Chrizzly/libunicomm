@@ -1,0 +1,51 @@
+/** 
+@mainpage Unicomm
+@image html unicomm_logo.png
+<p><strong>Igor Zimenkov<br>Dmitry Timoshenko<br></strong></p>
+Copyright (c) 2013 Igor Zimenkov.<br>
+Copyright (c) 2013 Dmitry Timoshenko.
+
+Distributed under the Boost Software License, Version 1.0.
+(See accompanying file LICENSE_1_0.txt or copy at 
+http://www.boost.org/LICENSE_1_0.txt).
+
+<ul style="list-style-type:none;">
+  <li>@subpage intro_section
+  <li>@subpage installation_page
+  <li>@subpage preprocessor_defines_page
+  <li>@subpage tutorial_page
+    <ul style="list-style-type:none;">
+      <li>@subpage basics_section
+      <li>@subpage sessions_section
+      <li>@subpage config_section
+    </ul>
+  <li>@subpage examples_page
+    <ul style="list-style-type:none;">
+      <li>@ref term_example_page
+      <li>@ref echo_example_page
+      <li>@ref http_example_page
+    </ul> 
+  <li>@subpage xml_format_page
+  <li>@subpage known_issues_page
+  <li>@subpage faq_page
+</ul>
+
+@section intro_section Introduction
+
+<p>
+<span style="font-size: 200%; font-family: Times New Roman;">U</span>nicomm is a 
+C++ framework provides mechanisms for TCP based network applications construction. 
+The main purpose is to focus on business logic 
+and make communication process transparent to user. Unicomm simplifies 
+connection management like accepting incoming connections and handling 
+disconnects. It provides an easy way to associate data with the connection. 
+The flexible mechanisms for custom logic protocol construction makes 
+the design of the application is modular and clear. 
+Protocols implemented by using unicomm are flexible to changes and easily
+modifiable. SSL, predefined xml and binary formats are also provided as option. 
+It's made by using modern C++ concepts, stl and boost.
+</p>
+
+<a href="http://libunicomm.org" target="_blank">Home</a>
+ */
+ 

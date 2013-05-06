@@ -1,0 +1,57 @@
+/** 
+@page tutorial_page Tutorial
+
+<ul style="list-style-type:none;">
+  <li>@subpage basics_section
+  <li>@subpage sessions_section
+  <li>@subpage config_section
+</ul>
+
+@section basics_section Basics
+
+There are several entities involved to provide the functionality you should know 
+to use unicomm. 
+
+@par Messages
+Messages are objects that the communication sites send each other. 
+Messages can be serialized and deserialized. Base class for the messages is
+unicomm::message_base. In most cases it's just necessary to override two
+virtual members to provide the serialization of custom data fields.
+There are also predefined facade message classes that allow to transfer 
+either binary or XML data using built-in XML engine.
+If you wish to use your own message format (decoding/encoding), 
+you should also implement decoder/encoder entities: 
+unicomm::message_decoder_base, unicomm::message_encoder_base.
+
+@par Sessions 
+The session is an object that created when connect occurs and destroyed on disconnect.
+Session provides number of virtual functions that receive different communication events. 
+Like message arrived, message sent, message timeout and etc. Base classes for session are 
+unicomm::session_base, unicomm::basic_session or unicomm::extended_session 
+(@ref which_session_to_use_section "Which one to use"?).
+
+@par Communicator
+Communication is provided by unicomm::communicator.
+Communicator object associated with the session that is accessible through the 
+handler parameters of the session. Communicator provides information about the 
+connection and also provides control over the connection such as disconnect and send 
+services. Each instance of unicomm::communicator has an unique @e identifier.
+As communicator represents the connection, connection has an id. 
+This id is mentioned in this manual as connection id, comm id and communicator id, session id. 
+Those are the same.
+
+@par Dispatcher (Server, Client)
+In most it's enough to use unicomm::server and unicomm::client as is. 
+The only difference between server and client is that client can initiate 
+connections and server can accept connections. To start working it's necessary 
+to execute unicomm::dispatcher::run(). There is no background threads are used.
+The context (thread) of the execution shoould be provided by the user. 
+Then it's necessary to call unicomm::server::accept() or unicomm::client::connect() 
+to start the communication process.
+
+@par Configuration
+Server and client should be configured before they can be used. It's necessary to 
+provide factory methods for certain entities and other stuff to unicomm. 
+Configuration binds the above stuff together.
+On how to create configuration object please inspect @ref examples_page "examples".
+*/ 

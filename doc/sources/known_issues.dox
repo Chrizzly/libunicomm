@@ -1,0 +1,14 @@
+/** 
+@page known_issues_page Known issues
+
+@par The debug-ssl configuration linkage failure under Windows
+If boost naming layout is versioned the debug-ssl variant is not 
+built in coulple with  <em>@ref use_pre_built_boost "--use-pre-built-boost"</em> option.
+Use boost as source tree (by default) if you need this variant to be built.
+<br><strong>Note:</strong> The boost system layout is not tested.
+
+@par Recommendations
+If you use static unicomm::server or unicomm::client object be sure to stop it before object
+starts destroying. Undefined behaviour like hanging up and memory access violations
+may occur due to undefined destroying order of static objects.
+ */

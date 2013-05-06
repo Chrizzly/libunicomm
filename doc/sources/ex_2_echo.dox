@@ -1,0 +1,172 @@
+/**
+@page echo_example_page Echo
+
+<p>
+This example shows how to use unicomm optional facilities like 
+predefined binary message format, timeouts and etc. to implement communication.
+The request is answered with reply bears the copy of request's data.
+</p>
+ 
+@section echo_includes_section Includes
+We include unicomm core and binary message.
+
+@dontinclude echo/echo.hpp
+@skipline <unicomm/
+@until <unicomm/unicomm.hpp>
+
+@section echo_messages_section Messages
+
+Define message class template. Each message class must define name() function 
+returns the message type unique identifier.
+
+@skipline template <char Name>
+@until };
+
+Define request 
+
+@skipline typedef basic_message<'1'> echo_request_message;
+
+and reply.
+
+@skipline typedef basic_message<'2'> echo_reply_message;
+ 
+@note To safely (platform independent) serialize integral types use 
+unicomm::int_to_vec() and unicomm::int_from_vec(). 
+The floating point serializators are not provided.
+  
+@section echo_session_params_section Session parameters
+
+We are going to pass parameters to the client's session.
+
+@skipline // client session parameters
+@until size_t _clients_num;
+@line };
+
+The server's session has no parameters. 
+To designate the session has no specific parameters 
+use unicomm::void_session_params or leave the template parameter unspecified
+while inheriting the unicomm::basic_session or unicomm::extended_session. 
+This makes the compiler to use specialized versions of class templates 
+while instantiating session class template. To pass extra parameters 
+to the session use boost::bind when setting up the 
+@ref echo_config_section "configuration".
+
+@skipline typedef unicomm::void_session_params server_session_params;
+
+@section echo_session_section Session
+
+We define the session that holds session specific data and implements 
+business logic by inheriting it from unicomm::extended_session. 
+
+@skipline template <typename SessionParamsT
+@until public:
+
+Server session here doesn't have parameters and client session does. 
+So, we define two distinct constructors for server and for client.
+
+@until explicit session(
+@until }
+@until }
+
+In the request handler we send reply and print the information. 
+To set the reply to the incoming request unicomm::message_arrived_params::out_message() 
+is used. Another way to send a reply is to save the incoming message id acessible 
+through unicomm::message_base::id() and use it as a reply id when sending the message. 
+It's necessary to set unicomm::message_base::rid() to this value and 
+call one of the unicomm::send_one() or unicomm::dispatcher::send_one() variant. 
+You may also perform disconnect by calling params.comm().disconnect() or 
+throwing unicomm::disconnected_error. 
+
+@skipline echo_request_arrived_handler
+@until }
+@until }
+
+In this example "same" session type is used by client and server. 
+As you can see the behavior in certain cases (e.g. connected handler) 
+is split by using specializations. In real world
+the difference between server and client can be greater. 
+So, it is better solution to split code to different classes that represent 
+server and client side sessions.
+
+@skipline connected_handler
+@until // empty
+@until // empty
+@until }
+
+Other handlers are omitted due to they only prints information. 
+Please, view sources @ref echo_sources_page "here".
+
+@section echo_client_spesific_section Client specific
+
+We also define client specific handler that fired if the connection could not be 
+established due to some reason. It prints information and initiates 
+new connection if the connections number is zero. The handler is passed to the 
+client on it's constructor.
+
+@dontinclude echo/echo.cpp
+@skipline void uni_echo::connect_error_handler
+@until }
+@until }
+
+@section echo_config_section Configuration
+ 
+The last step is to define configuration to make unicomm working 
+in proper manner.
+ 
+@skipline unicomm::config&
+@until unicomm::config()
+
+We tell unicomm to use 55555 port, enable timeouts handling, use unique 
+identifiers while processing messages, that enables asynchronously 
+send requests and receive replies. If unicomm::config::use_unique_message_id() 
+is false the reply will be considered as a reply to the last request 
+has been sent.
+
+@until use_unique_message_id(true)
+
+The lines below provide unicomm required information about messages we have. 
+To tell unicomm about the messages we use unicomm::config::message_info().
+It accepts five parameters where only the first is required. 
+For request we have: first is a message type name (identifier),
+second tells whether reply is necessary to be waited for 
+1000 (third) milliseconds and the fourth is the vector of reply message type 
+identifiers allowed, fifth is ommited and designates the default priority to be 
+assigned to each instance of that message type if is not assigned yet.
+
+@until message_info(echo_reply_message::static_name())
+ 
+It's also necessary to give unicomm the factory methods to create the 
+messages defined above.
+
+@until &unicomm::create<uni_echo::echo_reply_message>)
+@line )
+
+Next lines setup ssl specific parameters.
+
+@until );
+ 
+Eventually we call unicomm::set_binary_message_format() that sets up specific 
+decoders and encoders.
+
+@until }
+
+@section echo_main_section Main
+ 
+Let's use the above defined stuff. 
+
+@dontinclude echo/main.cpp
+@skip } // unnamed namespace
+@skipline #if defined (UNI_WIN)
+@until unicomm::host_resolver
+
+Then we either start server or client.
+
+@until return EXIT_SUCCESS;
+@until }
+
+@see unicomm::load_from_complex_xml().
+
+<h1>Sources</h1>
+@subpage echo_sources_page.
+
+*/

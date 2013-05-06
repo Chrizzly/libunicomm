@@ -1,0 +1,17 @@
+Version 1.01e
+  - Multithreading support for debug out added. SMART_MT_DEBUG_OUT macros added.
+
+Version 1.01d
+  - Complex property iterator is now compatible to STL. 
+  - Some insignificant improvements.
+
+Version 1.01c 
+  - Stable priority queue added. Preservs the order of elements with the same priority.
+  - Build scripts improved.
+
+Version 1.01 
+  - Data library added. XML engine to store different data types.
+
+Version 1.00 
+  - First pre alpha release.
+ 

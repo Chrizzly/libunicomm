@@ -1,0 +1,500 @@
+##########################################################################
+# Jamroot
+#
+# Unified Communication protocol C++ library.
+#
+# Unicomm jam root project file.
+# Declares unicomm project rules to build unicomm library using
+# desired configuraion.
+#
+# Please, try .\build.cmd --help or ./build.sh --help on Linux for more details.
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+# Copyright 2009 Dmitry Timoshenko
+
+# Some pieces of code are taken from boost library jam files.
+
+import builtin ;
+import common ;
+import option ;
+import targets ;
+import path ;
+
+##########################################################################
+# constants
+
+path-constant UNICOMM_ROOT : . ;
+constant UNICOMM_VERSION : 2.17 ;
+
+local version-tag = [ MATCH "^([^.]+)[.]([^.]+)" : $(UNICOMM_VERSION) ] ;
+constant UNICOMM_VERSION_TAG : $(version-tag:J="_") ;
+
+##########################################################################
+# unicomm jam project
+
+# define new build variants
+variant debug-ssl : debug : <define>UNICOMM_SSL ;
+variant release-ssl : release : <define>UNICOMM_SSL ;
+
+project unicomm
+  ###
+  : source-location
+    $(UNICOMM_ROOT)/src
+    $(UNICOMM_ROOT)/src/facade
+    $(UNICOMM_ROOT)/src/detail
+  ###
+  : requirements
+    <threading>multi
+    <runtime-link>shared
+    <target-os>windows:<define>WIN32
+    <target-os>windows:<define>_UNICODE
+    <target-os>windows:<define>UNICODE
+    <variant>debug:<define>DEBUG
+    <variant>debug:<define>_DEBUG
+    <variant>debug-ssl:<define>DEBUG
+    <variant>debug-ssl:<define>_DEBUG
+    <variant>release:<define>NDEBUG
+    <variant>release-ssl:<define>NDEBUG
+    <conditional>@handle-static-runtime
+    <conditional>@get-win-ver
+  ###
+  : default-build
+    <variant>release
+    <link>static
+    <link>shared
+  ###
+  : usage-requirements
+  ###
+  : build-dir $(UNICOMM_ROOT)/out/stuff/boost-build
+  ;
+
+##########################################################################
+# Targets
+
+# unicomm debug, release, debug-ssl, release-ssl targets
+lib unicomm
+  : ### sources
+    [ glob *.cpp ]
+    # libraries
+    /boost//filesystem/<link>static
+    /boost//thread/<link>static
+    /boost//system/<link>static
+    /boost//date_time/<link>static
+    /boost//regex/<link>static
+
+    /smart//smart_sync_objects
+    /smart//smart_debug_out
+    /smart//smart_timers
+  : ### requirements
+    <toolset>msvc,<link>shared:<source>unicomm.rc
+    <toolset>intel,<link>shared:<source>unicomm.rc
+    <variant>debug-ssl:<library>/project-config//openssl
+    <variant>release-ssl:<library>/project-config//openssl
+    # disable msvc dll warnings!
+    <toolset>msvc,<link>shared:<cxxflags>"/wd4251 /wd4275 /wd4231 /wd4660 /wd4503"
+    <toolset>gcc,<variant>release:<cxxflags>"-Wno-strict-aliasing -Wno-unused"
+    <toolset>gcc,<variant>release-ssl:<cxxflags>"-Wno-strict-aliasing -Wno-unused"
+    # defines - general
+    <define>UNICOMM_SOURCE
+    <define>BOOST_ALL_NO_LIB=1
+    <link>shared:<define>UNICOMM_DYN_LINK
+    <target-os>windows,<link>static:<define>_LIB
+    # msvc
+    <toolset>msvc:<define>UNICOMM_NO_AUTO_LINK
+    <toolset>msvc:<define>UNICOMM_NO_SSL_AUTO_LINK
+    <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+    # intel
+    <toolset>intel:<define>UNICOMM_NO_AUTO_LINK
+    <toolset>intel:<define>UNICOMM_NO_SSL_AUTO_LINK
+    # unicomm includes
+    <include>$(UNICOMM_ROOT)/src/include
+    <include>$(UNICOMM_ROOT)/include
+
+    <conditional>@use-complex-xml-properties
+    # target's name
+    <tag>@$(__name__).tag
+  : ### default-build
+  : ### usage-requirements
+    # includes
+    <include>$(UNICOMM_ROOT)/include
+    # defines - general
+    <define>BOOST_ALL_NO_LIB=1
+    <link>shared:<define>UNICOMM_DYN_LINK
+    # msvc
+    <toolset>msvc:<define>UNICOMM_NO_AUTO_LINK
+    <toolset>msvc:<define>UNICOMM_NO_SSL_AUTO_LINK
+    <toolset>msvc,<link>shared:<cxxflags>"/wd4251 /wd4275"
+    # intel
+    <toolset>intel:<define>UNICOMM_NO_AUTO_LINK
+    <toolset>intel:<define>UNICOMM_NO_SSL_AUTO_LINK
+    <conditional>@use-complex-xml-properties
+  ;
+
+### installing to prefix location if specified or use default if 
+### unicomm-install designated
+local rule get-prefix
+{
+  return [ MATCH "^--prefix=(.*)" : [ modules.peek : ARGV ] ] ;
+}
+
+#-------------------------------------------------------------------------
+#local prefix-dir = [ MATCH "^--prefix=(.*)" : [ modules.peek : ARGV ] ] ;
+local prefix-dir = [ get-prefix ] ;
+
+if ! $(prefix-dir)
+{
+  if [ modules.peek : NT ]
+  {
+    prefix-dir = c:\\unicomm ;
+  }
+  else
+  {
+    prefix-dir = /usr/local ;
+  }
+}
+
+path-constant PREFIX_DIR : $(prefix-dir) ;
+
+install unicomm_prefix_lib_install
+  : ### sources
+    unicomm
+  : ### requirements
+    <location>$(PREFIX_DIR)/lib
+    <install-type>LIB
+  ;
+
+install unicomm_prefix_headers_install
+  : ### sources
+    [ path.glob-tree $(UNICOMM_ROOT)/include : *.hpp : .svn ]
+  : ### requirements
+    <location>$(PREFIX_DIR)/include
+    <install-source-root>$(UNICOMM_ROOT)/include
+  ;
+
+#-------------------------------------------------------------------------
+local rule is-unicomm-install
+{
+  if unicomm-install in [ modules.peek : ARGV ] 
+  {
+    return unicomm-install ;
+  } else
+  {
+    return ;
+  }
+}
+ 
+# #-------------------------------------------------------------------------
+# local rule is-samples-install
+# {
+  # if term-install in [ modules.peek : ARGV ] || 
+     # echo-install in [ modules.peek : ARGV ] || 
+     # http-install in [ modules.peek : ARGV ] || 
+  # {
+    # return unicomm_native_install ;
+  # } else
+  # {
+    # return ;
+  # }
+# }
+ 
+#-------------------------------------------------------------------------
+local rule unicomm-install-source-list
+{
+  #local result = unicomm_native_install ;
+  local result = unicomm_prefix_lib_install unicomm_prefix_headers_install ;
+
+  if [ is-unicomm-install ]
+  {
+    result += unicomm_native_install ;
+  } 
+  
+  # if $(PREFIX_DIR)
+  # {
+    # result += unicomm_prefix_lib_install unicomm_prefix_headers_install ;
+  # }
+
+  return $(result) ;
+}
+
+#-------------------------------------------------------------------------
+local rule get-unicomm-install
+{
+  if [ get-prefix ]
+  {
+    return ;
+  } else
+  {
+    return unicomm-install ;
+  }
+}
+
+### install target rule
+alias unicomm-install : [ unicomm-install-source-list ] ;
+
+install unicomm_native_install
+  : ### sources
+    unicomm
+  : ### requirements
+    <location>$(UNICOMM_ROOT)/lib
+    <install-type>LIB
+  ;
+
+##########################################################################
+### Samples
+use-project /unicomm/echo : samples/echo ;
+use-project /unicomm/http : samples/http ;
+use-project /unicomm/term : samples/term ;
+
+alias echo : /unicomm/echo//echo ;
+alias http : /unicomm/http//http ;
+alias term : /unicomm/term//term ;
+
+### echo install
+install echo-install
+  : ### sources
+    echo
+  : ### requirements
+    <link>shared:<location>$(UNICOMM_ROOT)/out/samples/boost-build/1/echo/shared
+    <link>static:<location>$(UNICOMM_ROOT)/out/samples/boost-build/1/echo/static
+    <install-type>EXE
+  ;
+
+### http install
+install http-install
+  : ### sources
+    http
+  : ### requirements
+    <link>shared:<location>$(UNICOMM_ROOT)/out/samples/boost-build/1/http/shared
+    <link>static:<location>$(UNICOMM_ROOT)/out/samples/boost-build/1/http/static
+    <install-type>EXE
+  ;
+
+### term install
+install term-install
+  : ### sources
+    term
+  : ### requirements
+    <link>shared:<location>$(UNICOMM_ROOT)/out/samples/boost-build/1/term/shared
+    <link>static:<location>$(UNICOMM_ROOT)/out/samples/boost-build/1/term/static
+    <install-type>EXE
+  ;
+
+#ECHO [ is-unicomm-install ] ;  
+  
+explicit 
+    unicomm 
+    echo 
+    http 
+    term 
+    [ get-unicomm-install ] 
+    #[ get-unicomm-native-install ]
+    echo-install 
+    http-install 
+    term-install 
+    [ unicomm-install-source-list ] 
+  ;
+
+##########################################################################
+# Auxiliary extra stuff
+
+rule handle-static-runtime ( properties * )
+{
+  # Using static runtime with shared libraries is impossible on Linux,
+  # and dangerous on Windows. Therefore, we disallow it. This might
+  # be drastic, but it was disabled for a while with nobody complaining.
+
+  # For CW, static runtime is needed so that std::locale works.
+  if <link>shared in $(properties) && <runtime-link>static in $(properties) &&
+      ! ( <toolset>cw in $(properties) )
+  {
+    ECHO "error: link=shared together with runtime-link=static is not allowed" ;
+    ECHO "error: such property combination is either impossible " ;
+    ECHO "error: or too dangerious to be of any use" ;
+    EXIT ;
+  }
+}
+
+#-------------------------------------------------------------------------
+# rule get-default-prefix ( properties * )
+# {
+   # if [ modules.peek : NT ]
+   # {
+       # layout = versioned ;
+   # }
+   # else
+   # {
+       # layout = system ;
+   # }
+# }
+
+#-------------------------------------------------------------------------
+rule get-win-ver ( properties * )
+{
+  if <os>NT in $(properties)
+  {
+    local win-ver = [ MATCH "^--win-ver=(.*)" : [ modules.peek : ARGV ] ] ;
+    if $(win-ver)
+    {
+      return <define>_WIN32_WINNT=$(win-ver) ;
+    } else
+    {
+      return <define>_WIN32_WINNT=0x501 ;
+    }
+  }
+}
+
+#-------------------------------------------------------------------------
+rule use-complex-xml-properties ( properties * )
+{
+  if --use-complex-xml in [ modules.peek : ARGV ] ||
+    <define>UNICOMM_USE_COMPLEX_XML in $(properties)
+  {
+    return <library>/smart//smart_data <define>UNICOMM_USE_COMPLEX_XML ;
+  }
+}
+
+# prints information screen
+# rule print-info ( properties * )
+# {
+  # # ECHO $(properties) ;
+  # # if ! $(printed)
+  # # {
+    # # constant printed : "yes" ;
+
+    # ECHO "Environment is properly set...\n" ;
+
+    # if $(use-pre-built-boost)
+    # {
+      # ECHO "Boost headers:\t"$(BOOST_INCLUDE_PATH) ;
+      # ECHO "Boost binaries:\t"$(BOOST_LIBRARY_PATH) ;
+    # } else
+    # {
+      # ECHO "Boost:\t\t"$(BOOST_ROOT) ;
+    # }
+
+    # ECHO "Smart:\t\t"$(SMART_ROOT) ;
+
+    # if ( <variant>debug-ssl in $(properties) ) ||
+      # ( <variant>release-ssl in $(properties) )
+    # {
+      # local nt = [ modules.peek : NT ] ;
+      # if $(nt)
+      # {
+        # ECHO "OpenSSL:\t"$(OPENSSL_ROOT) ;
+      # } else
+      # {
+        # ECHO "OpenSSL:\tUsing libssl known library on this platform" ;
+      # }
+    # }
+
+    # if $(use-complex-xml)
+    # {
+      # ECHO "Xerces-C:\t"$(XERCESC_ROOT) ;
+    # }
+
+    # ECHO "\nReady to build unicomm...\n" ;
+  # # }
+# }
+
+# What kind of layout are we doing?
+#layout = [ option.get layout : "" ] ;
+layout = versioned ;
+# On Windows, we used versioned layout by default in order to
+# be compatible with autolink. On other systems, we use system
+# layout which is what every other program uses. Note that windows
+# check is static, and won't
+#if ! $(layout)
+#{
+#    if [ modules.peek : NT ]
+#    {
+#        layout = versioned ;
+#    }
+#    else
+#    {
+#        layout = system ;
+#    }
+#}
+#layout-$(layout) = true ;
+
+#if $(layout) = system && $(build-type) = complete
+#{
+#    ECHO "error: Cannot use --layout=system with --build-type complete." ;
+#    ECHO "error: Please used either --layout=versioned or --layout=tagged " ;
+#    ECHO "error: if you wish to build multiple variants." ;
+#    if ! [ modules.peek : NT ]
+#    {
+#        ECHO "error: Note that --layout=system is default on Unix starting with Boost 1.40." ;
+#    }
+#    EXIT ;
+#}
+
+# This rule is called by Boost.Build to determine the name of target. We use it
+# to encode the build variant, compiler name and boost version in the target
+# name.
+#
+rule tag ( name : type ? : property-set )
+{
+  if $(type) in STATIC_LIB SHARED_LIB IMPORT_LIB EXE
+  {
+    local result ;
+
+    local variant ;
+    if [ $(property-set).get <variant> ] in debug
+    {
+      variant = debug ;
+    }
+    else if [ $(property-set).get <variant> ] in debug-ssl
+    {
+      variant = ssl-debug ;
+    }
+    else if [ $(property-set).get <variant> ] in release
+    {
+      variant = ;
+    }
+    else if [ $(property-set).get <variant> ] in release-ssl
+    {
+      variant = ssl ;
+    }
+    else
+    {
+      ECHO "error: Invalid build variant '$(variant)'" ;
+      EXIT ;
+    }
+
+    if $(layout) = versioned
+    {
+      result = [ common.format-name
+        <base> <toolset> -$(variant) -$(UNICOMM_VERSION_TAG)
+        : $(name) : $(type) : $(property-set) ] ;
+    }
+    else if $(layout) = system
+    {
+      result = [ common.format-name <base> -$(variant)
+        : $(name) : $(type) : $(property-set) ] ;
+    }
+    else
+    {
+      ECHO "error: invalid layout '$(layout)'" ;
+      EXIT ;
+    }
+
+    # Optionally add version suffix. On NT, library with version suffix
+    # will not be recognized by linkers. On CYGWIN, we get strage
+    # duplicate symbol errors when library is generated with version
+    # suffix. On OSX, version suffix is not needed -- the linker expects
+    # the libFoo.1.2.3.dylib format. AIX linkers do not accept version
+    # suffixes either. Pgi compilers can not accept library with version
+    # suffix.
+    if $(type) = SHARED_LIB &&
+      ( ! ( [ $(property-set).get <target-os> ] in windows cygwin darwin aix ) &&
+        ! ( [ $(property-set).get <toolset> ] in pgi ) )
+    {
+      result = $(result).$(UNICOMM_VERSION)  ;
+    }
+
+    return $(result) ;
+  }
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0030)http://localhost/cv/?locale=ru -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Welcome to Unicomm C++ project</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link href="./style.css" rel="stylesheet" type="text/css" media="screen">
+</head>
+
+<body>
+<script type="text/javascript">
+
+  //---------------------------------------------------------------------------
+  function write_mail(username, domain, subject, class_attr, label) 
+  {
+    /*const*/ var email = username + '@' + domain;
+    document.write('<a href=mailto:' + email);
+
+    if (subject)
+    {
+      document.write('?subject=' + subject);
+    }
+		
+    if (class_attr != "" && class_attr != null) 
+    {
+      document.write(" class=" + class_attr);
+    }
+		
+    document.write('>');
+
+    if (label) 
+    {
+      document.write(label);
+    } else 
+    {
+      document.write(email);
+    }
+		
+    document.write("</a>"); 
+  }	
+	
+  //---------------------------------------------------------------------------	
+  function out_mail()
+  {
+    try
+    {
+      write_mail('you.are.welcome', 'libunicomm.org');
+    } catch(e) 
+    {
+      return alert('An error has been encountered: [' + e + ']');
+    }
+  }
+
+</script>
+
+<div id="wrapper">
+	<div id="logo">
+		<h1><a href="http://libunicomm.org" target="_blank">Unicomm</a></h1>
+		<p>C++ open source library</p>
+	</div>
+	<hr>
+	<!-- end #logo -->
+	<div id="header">
+		<div id="menu">
+				<div id="left-menu">
+					<script type="text/javascript">out_mail();</script>
+				</div>
+				<div id="right-menu-locale">
+				</div>
+				<div id="right-menu-pdf">
+				</div>
+		</div>
+		<!-- end #menu -->
+	</div>
+	<!-- end #header -->
+	
+	<!-- end #header-wrapper -->
+		<div id="page-frame">
+			<div id="page">
+			
+		<!--	<div id="page-bgtop">-->
+				<div id="content">
+				<div class="post" style="height:360px;">
+					<h1 class="title" style="margin-bottom:10px;"><a href="#">Congratulations!</a></h1>
+					<img src="./images/lady_on_tiger.jpg" style="float:left;margin-right:10px;display:block;"/>
+					<div class="meta" style="float:left;display:block;">
+						<p>
+							There was a young lady of Niger<br/>
+							Who smiled as she rode on a tiger;<br/>
+							They returned from the ride<br/>
+							With the lady inside,</br>
+							And the smile on the face of the tiger.</br>
+						</p>
+					</div>
+					<div class="meta" style="float:left;display:block;">
+						<p>
+							<strong>It works!</strong> Please, to find out more details go to <a href="http://libunicomm.org" target="_blank">unicomm's home page</a>
+						</p>
+					</div>
+				</div>
+				
+				</div>
+				<!-- end #content -->
+				<div style="clear: both;">&nbsp;</div>
+		</div>
+		</div>
+
+	<!-- end #page -->
+	<div id="footer-bgcontent">
+	<div id="footer">
+		<p>
+			&copy; 2011 <a href="http://libunicomm.org" target="_blank">Unicomm</a> 
+			<!--   <script type="text/javascript">out_mail();</script> -->
+		</p> 
+	</div>
+	</div>
+	<!-- end #footer -->
+</div>
+
+</body></html>

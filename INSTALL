@@ -1,0 +1,5 @@
+INSTALL
+
+On how to install unicomm, please, see accompanying documentation located
+in ./index.html, go to http://libunicomm.org/?page=manuals 
+or try ./build.sh --help on Linux, .\build.cmd --help on Windows.

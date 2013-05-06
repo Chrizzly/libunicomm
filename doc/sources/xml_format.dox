@@ -1,0 +1,51 @@
+/** 
+@page xml_format_page XML format
+
+This section describes the XML format used by unicomm to transfer messages.
+<!--
+The XML engine is provided by @ref smart_library_page smart (smart_data).
+-->
+
+There are four basic (built-in) types: int (int), uint (unsigned int), string (std::string), 
+double (double), complex (smart::data::complex). In the brackets C++ types are specified.
+The object of necessary type is declared via XML tag having similar name.
+
+The root tag is <em><message></em>. The <em><message></em> tag is similar to <em><complex></em> tag.
+There is no nested <em><message></em> tag allowed. The <em><complex></em> tag may contain
+nested <em><int></em>, <em><uint></em>, <em><string></em>, <em><double></em> and <em><complex></em> itself. 
+Each object (tag) must have <em>name</em> attribute.
+The name string can be empty but attribute anyway should present.
+It's possible to declare one-dimensional array of each type including <em><complex></em>.
+The array is declared using <em><items></em> tag, it can only appear inside type tags. 
+For instance, following will create strings array with four elements.
+
+@verbatim
+<string name="strings array">
+  <items>
+    <item>string1</item>
+    <item>string2</item>
+    <item>string3</item>
+    <item>string4</item>
+  </items>
+</string> 
+@endverbatim
+
+If you want to use array of <em><complex></em> objects use <em><complex></em> tag inside <em>item</em> tag.
+
+@note When use complex array each <em><complex></em> object can have own configuration (content).
+It's also possible to emulate many dimensional arrays using complex array. Inside array
+name attribute can be omitted. To use short names for tags define SMART_COMPLEX_SHORT_XML_TAGS
+while building smart library. In this case all the tags and attributes will be named as
+shortly as possible: string = s, double = d, int = i, uint = ui, name = n, complex = c,
+message = m, items = is, item = it.
+
+<!--
+On how to serialize and deserialize your data within unicomm XML format, 
+please, examine the @ref echo_example_page "echo" sample.
+-->
+
+Let's take a look at the @ref echo_example_page "echo" example configuration file. 
+It uses the unicomm XML format message to store settings.
+
+@verbinclude echo/echo_binary.xml
+*/

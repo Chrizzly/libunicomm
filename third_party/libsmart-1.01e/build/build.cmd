@@ -1,0 +1,36 @@
+@echo off
+
+rem ///////////////////////////////////////////////////////////////////////////
+rem build-win.cmd
+rem
+rem Smart multipurpose C++ library.
+rem
+rem Smart build automation auxiliary script.
+rem
+rem Distributed under the Boost Software License, Version 1.0.
+rem (See accompanying file LICENSE_1_0.txt or copy at 
+rem http://www.boost.org/LICENSE_1_0.txt)
+rem 
+rem 2009, (c) Dmitry Timoshenko
+
+call dependencies.cmd
+
+if %ERRORLEVEL% neq 0 goto :eof
+
+rem //////////////////////////////////////////////////////////////////////////
+rem Invoke boost build engine
+
+cd ..
+
+bjam.exe %*
+
+if %ERRORLEVEL% neq 0 (
+  set ERROR_MESSAGE=Boost bjam returned an error
+  goto :eof
+)
+
+rem Compiler or maybe someboby else doesn't set ERRORLEVEL properly - depending on 
+rem compilation result. %ERRORLEVEL% is always zero.
+rem echo Unicomm is successfully built!
+
+rem goto :eof

@@ -1,0 +1,82 @@
+##########################################################################
+# project-config.jam
+#
+# Smart multipurpose C++ library.
+#
+# Declares smart bjam project dependencies.
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+#
+# Copyright 2009 Dmitry Timoshenko
+
+import project ;
+import os ;
+import boost ;
+
+project project-config ;
+
+##########################################################################
+# get libraries location using environment variables, see dependecies-*.*
+# files to properly configure those pathes
+
+local rule define-path-constant ( env-var-name )
+{
+  if [ os.environ $(env-var-name) ]
+  {
+    path-constant $(env-var-name) : [ os.environ $(env-var-name) ] ;
+  }
+}
+
+local rule define-const ( env-var-name )
+{
+  if [ os.environ $(env-var-name) ]
+  {
+    constant $(env-var-name) : [ os.environ $(env-var-name) ] ;
+  }
+}
+
+define-path-constant BOOST_ROOT ;
+define-path-constant BOOST_INCLUDE_PATH ;
+define-path-constant BOOST_LIBRARY_PATH ;
+define-const XERCESC_ROOT ;
+
+local use-pre-built-boost = [ MATCH "^--use-pre-built-boost=(.*)" : [ modules.peek : ARGV ] ] ;
+if $(use-pre-built-boost)
+{
+  ECHO "Smart: Using boost prebuilt libraries" ;
+
+  using boost : $(use-pre-built-boost)
+    : <include>$(BOOST_INCLUDE_PATH)
+      <library>$(BOOST_LIBRARY_PATH)
+    ;
+
+  boost.use-project ;
+} else
+{
+  ECHO "Smart: Using boost source tree" ;
+
+  use-project boost : $(BOOST_ROOT) ;
+}
+
+##########################################################################
+# Apache Xerces-C++ XML
+
+### debug, debug-ssl, release, release-ssl
+searched-lib xercesc
+  :
+  :
+    <target-os>windows,<variant>debug:<name>xerces-c_2D
+    <target-os>windows,<variant>debug-ssl:<name>xerces-c_2D
+    <target-os>windows,<variant>release:<name>xerces-c_2
+    <target-os>windows,<variant>release-ssl:<name>xerces-c_2
+
+    <target-os>linux:<name>xerces-c
+    <search>$(XERCESC_ROOT)lib
+    <link>shared
+  :
+  :
+    <include>$(XERCESC_ROOT)include
+  ;
+
