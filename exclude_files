@@ -1,6 +1,7 @@
 fixme
 .svn
 .git
+.gitignore
 \lib\unicomm
 \lib\libunicomm
 \tmp\
