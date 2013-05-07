@@ -104,7 +104,7 @@ connect error handler is called.
 The event occurs each time when the process iteration is about to finish.
 The handler is called after all the communication objects are processed.
 So, if there are no connections this handler is called within the 
-unicomm::config::working_thread_sleep_tout() period.
+unicomm::config::dispatcher_idle_tout() period.
 
 @see unicomm::dispatcher::set_after_all_processed_handler(),
 unicomm::dispatcher::clear_after_all_processed_handler.

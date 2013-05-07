@@ -139,7 +139,7 @@ Other variables have empty string values.
 To build unicomm and samples use @e @b build.sh/cmd. If executed without 
 parameters builds @e release variant in @e static and @e shared configurations. 
 @e build.sh/cmd accepts any parameters accepted by bjam, but there are some 
-extra parameters exist. To build all possibly variants and configurations use 
+extra parameters exist. To build all possible variants and configurations use 
 @e @b build-complete.sh/cmd, please. 
 
 Execute <em>./build.sh --help</em> on Linux or <em>.\\build.cmd --help</em> 
