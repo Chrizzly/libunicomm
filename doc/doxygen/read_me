@@ -1,0 +1,2 @@
+To make documentation from sources, please use doxygen 1.8.2. 
+Another versions seems does not work with the supplied Doxyfile.
