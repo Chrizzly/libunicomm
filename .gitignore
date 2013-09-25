@@ -22,3 +22,5 @@ out/samples/ide/
 ipch/
 *.sdf
 temp/
+doc/manuals*/*
+
