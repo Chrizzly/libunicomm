@@ -1,0 +1,28 @@
+var classunicomm_1_1extended__session =
+[
+    [ "pointer_type", "classunicomm_1_1extended__session.html#acc44251a35f64344e5d40ca898ed6489", null ],
+    [ "this_type", "classunicomm_1_1extended__session.html#a005dccc7f45bf47e8461eb6be6180381", null ],
+    [ "extended_session", "classunicomm_1_1extended__session.html#a9f5fac02a38a6ca8c031d2757129557b", null ],
+    [ "extended_session", "classunicomm_1_1extended__session.html#aef7b7291104239af6dc9d5032f5b3c51", null ],
+    [ "add_connected_handler", "classunicomm_1_1extended__session.html#a9b2db9c0f3bde7ec441d8d4ed4af91f6", null ],
+    [ "add_disconnected_handler", "classunicomm_1_1extended__session.html#a5418504b4f368557b2e98d38db259045", null ],
+    [ "after_processed_handler", "classunicomm_1_1extended__session.html#a61ba30bb21b3f14a1b440f0daeedc091", null ],
+    [ "clear_after_processed_handler", "classunicomm_1_1extended__session.html#a6744ce64320e6eb7d782b8dde7609e76", null ],
+    [ "clear_any_message_arrived_handler", "classunicomm_1_1extended__session.html#ace05cdb5b1f9185e4d623c19c76fbc87", null ],
+    [ "clear_error_handler", "classunicomm_1_1extended__session.html#a4f3ff6461733da793813119a270324f4", null ],
+    [ "clear_message_arrived_handler", "classunicomm_1_1extended__session.html#ace7e7b3fd1f855184d0da96e0e1849fc", null ],
+    [ "clear_message_sent_handler", "classunicomm_1_1extended__session.html#a3a47ceb87ca16a09b8a0578a4784165e", null ],
+    [ "clear_message_timeout_handler", "classunicomm_1_1extended__session.html#a710f3dd0bdb39cd90f16b3f74daf5224", null ],
+    [ "connected_handler", "classunicomm_1_1extended__session.html#ad8ce76a30a979befcd79a022220a1b16", null ],
+    [ "disconnected_handler", "classunicomm_1_1extended__session.html#a802435a754be295db575ed4baad0f8d8", null ],
+    [ "error_handler", "classunicomm_1_1extended__session.html#a936cd1363cdad388e8da738465409dc7", null ],
+    [ "message_arrived_handler", "classunicomm_1_1extended__session.html#a110a9dc327f590c11680923f0b85099a", null ],
+    [ "message_sent_handler", "classunicomm_1_1extended__session.html#ae9e60f00306fd91e846cbfe5c80a652f", null ],
+    [ "message_timeout_handler", "classunicomm_1_1extended__session.html#a986828dda873b407eba4a597bd360fd8", null ],
+    [ "set_after_processed_handler", "classunicomm_1_1extended__session.html#aa6478228ae86b63921a5ade58e4e33cf", null ],
+    [ "set_any_message_arrived_handler", "classunicomm_1_1extended__session.html#a4c2cba2d0fccb7694215ca7e66b7b5df", null ],
+    [ "set_error_handler", "classunicomm_1_1extended__session.html#a461344e555519fab5989eae63c1c5625", null ],
+    [ "set_message_arrived_handler", "classunicomm_1_1extended__session.html#aa9a3dd8cda4c718c86fe083b6f9070f2", null ],
+    [ "set_message_sent_handler", "classunicomm_1_1extended__session.html#a444b98f4ecef772cf3d488185d4f9929", null ],
+    [ "set_message_timeout_handler", "classunicomm_1_1extended__session.html#a623f95f6b1a9be418b428b6ecbe02752", null ]
+];
