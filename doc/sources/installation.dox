@@ -64,8 +64,9 @@ Unpack the boost build package and build bjam executable under your platform.
 Go to <em>boost-build/engine/src</em> and start <em>build.sh/bat</em> file.
 Don't forget to make bjam binary to be on the search @e PATH.
 One of the ways to designate Boost.Build location is to setup the @e BOOST_BUILD_PATH 
-environment variable to the root of your Boost.Build copy. 
-To find out more details, please see Boost.Build's
+environment variable to the root of your Boost.Build copy. @b Note the path
+must not contain trailing backslash or slash (on Windows) instead bjam will fail 
+to load Boost.Build. To find out more details, please see Boost.Build's
 <a href="http://www.boost.org/boost-build2/" target="_blank">home page</a>.
 
 If you are not using a Boost.Build package, but rather the version bundled with 

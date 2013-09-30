@@ -9,7 +9,7 @@ connected clients.
 </p>
 
 @section term_includes_section Includes
-We are not going to use optinal features, include only the library core provided
+We are not going to use optional features, include only the library core provided
 by unicomm.hpp header.
 
 @dontinclude term/term.hpp

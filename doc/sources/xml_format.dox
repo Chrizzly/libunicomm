@@ -7,7 +7,7 @@ The XML engine is provided by @ref smart_library_page smart (smart_data).
 -->
 
 There are four basic (built-in) types: int (int), uint (unsigned int), string (std::string), 
-double (double), complex (smart::data::complex). In the brackets C++ types are specified.
+double (double), complex (smart::data::complex). In the brackets C++ types specified.
 The object of necessary type is declared via XML tag having similar name.
 
 The root tag is <em><message></em>. The <em><message></em> tag is similar to <em><complex></em> tag.

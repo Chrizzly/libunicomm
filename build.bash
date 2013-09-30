@@ -54,6 +54,11 @@ if [[ "${WANT_HELP}" = "true" ]]; then
   cat <<EOF
 Usage: ${0} [options] [properties] [targets]
 
+Note that Boost.Build should be properly configured before build unicomm.
+If you don't know what it is being talked about please see accompanying 
+documentation installation chapter located in ./index.html, or go to
+http://libunicomm.org/manuals/html/installation_page.html.
+
 To succesfully build unicomm it's neccessary to provide information about
 dependencies location on build machine. Assign correct values to
 following variables:

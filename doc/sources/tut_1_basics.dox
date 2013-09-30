@@ -45,7 +45,7 @@ In most it's enough to use unicomm::server and unicomm::client as is.
 The only difference between server and client is that client can initiate 
 connections and server can accept connections. To start working it's necessary 
 to execute unicomm::dispatcher::run(). There is no background threads are used.
-The context (thread) of the execution shoould be provided by the user. 
+The context (thread) of the execution should be provided by the user. 
 Then it's necessary to call unicomm::server::accept() or unicomm::client::connect() 
 to start the communication process.
 
