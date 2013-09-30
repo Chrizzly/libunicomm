@@ -5,6 +5,7 @@ fixme
 *.aps
 *.icproj
 *.ncb
+*.suo
 
 publish.cmd
 exclude_files
@@ -23,4 +24,5 @@ ipch/
 *.sdf
 temp/
 doc/manuals*/*
+/third_party/libsmart-*/out/stuff/
 
