@@ -165,6 +165,11 @@ goto :eof
 echo.
 echo Usage: %script_name% [options] [properties] [targets]
 echo.
+echo Note that Boost.Build should be properly configured before build unicomm.
+echo If you don't know what it is being talked about please see accompanying 
+echo documentation installation chapter located in ./index.html, or go to
+echo http://libunicomm.org/manuals/html/installation_page.html.
+echo.
 echo To succesfully build unicomm it's neccessary to provide information about
 echo dependencies location on build machine. Assign correct values to
 echo following variables:

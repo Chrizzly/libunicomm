@@ -41,7 +41,7 @@ if not defined BOOST_ROOT (
 )
 
 if not defined BOOST_ROOT (
-  set ERROR_MESSAGE=Boost Library location is undefined, please specify the path which library is available through
+  set ERROR_MESSAGE=BOOST_ROOT: Boost Library location is undefined
   goto handle_error
 )
 
@@ -74,7 +74,7 @@ if not defined BOOST_INCLUDE_PATH (
 )
 
 if not defined BOOST_INCLUDE_PATH (
-  set ERROR_MESSAGE=Boost Library location is undefined, please specify the path which library is available through
+  set ERROR_MESSAGE=BOOST_INCLUDE_PATH: Boost Library location is undefined
   goto handle_error
 )
 
@@ -104,7 +104,7 @@ if not defined BOOST_LIBRARY_PATH (
 )
 
 if not defined BOOST_LIBRARY_PATH (
-  set ERROR_MESSAGE=Boost Library location is undefined, please specify the path which library is available through
+  set ERROR_MESSAGE=BOOST_LIBRARY_PATH: Boost Library location is undefined
   goto handle_error
 )
 
